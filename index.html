@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LaPorte County Food Pantries</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      font-family: Arial, sans-serif;
+      background: #f9f9f6;
+      color: #333;
+      margin: 0;
+      padding: 1rem;
+    }
+    header {
+      text-align: center;
+      padding: 2rem 1rem;
+      background: #82b366;
+      color: #fff;
+      border-radius: 0 0 20px 20px;
+    }
+    h1 {
+      margin: 0;
+      font-size: 2rem;
+    }
+    .filter {
+      text-align: center;
+      margin: 1.5rem 0;
+    }
+    select {
+      padding: 0.5rem;
+      font-size: 1rem;
+    }
+    .pantry {
+      background: #fff;
+      margin: 1rem auto;
+      padding: 1rem 1.5rem;
+      border-radius: 10px;
+      max-width: 700px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    .pantry h2 {
+      margin-top: 0;
+      color: #2980b9;
+      font-size: 1.25rem;
+    }
+    .pantry p {
+      margin: 0.3rem 0;
+      font-size: 0.95rem;
+    }
+    .badge {
+      display: inline-block;
+      background: #27ae60;
+      color: white;
+      padding: 0.2rem 0.5rem;
+      margin-left: 0.5rem;
+      border-radius: 5px;
+      font-size: 0.8rem;
+    }
+    footer {
+      text-align: center;
+      margin-top: 3rem;
+      font-size: 0.9rem;
+      color: #666;
+    }
+    @media (max-width: 480px) {
+      header h1 {
+        font-size: 1.5rem;
+      }
+      .pantry {
+        padding: 1rem;
+      }
+      .pantry h2 {
+        font-size: 1.1rem;
+      }
+      .pantry p {
+        font-size: 0.9rem;
+      }
+    }
+    .lang-select {
+      text-align: center;
+      margin: 1rem 0;
+    }
+  </style>
+  <script type="text/javascript">
+    function googleTranslateElementInit() {
+      new google.translate.TranslateElement({
+        pageLanguage: 'en',
+        layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
+        autoDisplay: true
+      }, 'google_translate_element');
+    }
+  </script>
+  <script src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+</head>
+<body>
+  <header>
+    <h1>LaPorte County Food Pantries</h1>
+    <p>Find support. Find community.</p>
+  </header>
+
+  <div class="lang-select">
+    <div id="google_translate_element"></div>
+  </div>
+
+  <div class="filter">
+    <label for="dayFilter">Filter by day:</label>
+    <select id="dayFilter">
+      <option value="all">Show All</option>
+      <option value="Weekdays">Weekdays</option>
+      <option value="Weekends">Weekends</option>
+      <option value="Monday">Monday</option>
+      <option value="Tuesday">Tuesday</option>
+      <option value="Wednesday">Wednesday</option>
+      <option value="Thursday">Thursday</option>
+      <option value="Friday">Friday</option>
+      <option value="Saturday">Saturday</option>
+      <option value="Sunday">Sunday</option>
+    </select>
+  </div>
+
+  <div id="pantryList"></div>
+
+  <footer>
+    <p>Last Verified: June 18, 2025 | <a href="#">Submit Correction</a></p>
+  </footer>
+
+  <script>
+    const pantries = [
+      {
+        days: ["Monday", "Wednesday", "Friday"],
+        name: "Salvation Army – LaPorte",
+        hours: "10:00 AM – 5:00 PM",
+        location: "3240 Monroe St, LaPorte, IN",
+        contact: "(219) 326‑5342",
+        description: "Full-service pantry and emergency groceries.",
+        tags: ["Emergency", "Walk-ins Welcome"]
+      },
+      {
+        days: ["Wednesday", "Thursday", "Saturday"],
+        name: "The Pax Center",
+        hours: "Wed & Thu 12–1:30 PM, Sat 9–10:30 AM",
+        location: "605 Washington St, LaPorte, IN",
+        contact: "(219) 575‑7842",
+        description: "Fresh produce, pantry staples, and hot meals. Soup kitchen also available.",
+        tags: ["Hot Meals", "Community-run"]
+      },
+      {
+        days: ["Monday", "Wednesday", "Friday"],
+        name: "Center Township Trustee Office",
+        hours: "9:00 AM – 12:00 PM",
+        location: "1700 Lincolnway #6, LaPorte, IN",
+        contact: "(219) 362‑2736",
+        description: "Pantry and financial guidance. Delivery available for elderly.",
+        tags: ["Appointment Recommended"]
+      },
+      {
+        days: ["Tuesday", "Wednesday"],
+        name: "Good Shepherd Pantry",
+        hours: "10:00 AM – 2:00 PM",
+        location: "6006 N Fail Rd, LaPorte, IN",
+        contact: "(219) 778‑9444",
+        description: "Faith-based pantry with friendly volunteers and essentials.",
+        tags: ["Faith-based"]
+      },
+      {
+        days: ["Monday", "Tuesday", "Wednesday", "Thursday"],
+        name: "Springfield Township Pantry",
+        hours: "8:00 AM – 11:00 AM",
+        location: "227 W 650 N, LaPorte, IN",
+        contact: "(219) 325‑0809",
+        description: "Pantry by appointment. Serving Springfield Township residents.",
+        tags: ["Appointment Only"]
+      },
+      {
+        days: ["Tuesday"],
+        name: "Sacred Heart Church",
+        hours: "1:00 PM – 2:00 PM",
+        location: "201 Bach St, LaPorte, IN",
+        contact: "(219) 362‑3815",
+        description: "Boxed groceries. Open to the community.",
+        tags: ["Community-run"]
+      }
+    ];
+
+    const week = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+    const today = new Date().toLocaleDateString("en-US", { weekday: "long" });
+    const rollingWeek = [...week.slice(week.indexOf(today)), ...week.slice(0, week.indexOf(today))];
+
+    const filterSelect = document.getElementById('dayFilter');
+    const pantryList = document.getElementById('pantryList');
+
+    function renderPantries(filter = "all") {
+      pantryList.innerHTML = "";
+      const allEntries = [];
+      pantries.forEach(p => {
+        p.days.forEach(day => {
+          if (filter === "all" ||
+              (filter === "Weekends" && (day === "Saturday" || day === "Sunday")) ||
+              (filter === "Weekdays" && !["Saturday", "Sunday"].includes(day)) ||
+              filter === day) {
+            allEntries.push({...p, day});
+          }
+        });
+      });
+
+      allEntries.sort((a, b) => {
+        return rollingWeek.indexOf(a.day) - rollingWeek.indexOf(b.day);
+      });
+
+      allEntries.forEach(p => {
+        const div = document.createElement("div");
+        div.className = "pantry";
+        const isToday = p.day === today ? '<span class="badge">Open Today!</span>' : '';
+        const tagList = p.tags ? `<p><strong>Tags:</strong> ${p.tags.join(", ")}</p>` : '';
+        div.innerHTML = `
+          <h2>${p.day} – ${p.name} ${isToday}</h2>
+          <p><strong>Hours:</strong> ${p.hours}</p>
+          <p><strong>Location:</strong> <a href="https://www.google.com/maps/search/${encodeURIComponent(p.location)}" target="_blank">${p.location}</a></p>
+          <p><strong>Contact:</strong> ${p.contact}</p>
+          <p><strong>Description:</strong> ${p.description}</p>
+          ${tagList}
+        `;
+        pantryList.appendChild(div);
+      });
+    }
+
+    filterSelect.addEventListener('change', e => renderPantries(e.target.value));
+    renderPantries();
+  </script>
+</body>
+</html>
